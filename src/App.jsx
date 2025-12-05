@@ -16,7 +16,6 @@ const App = () => {
   const [error, setError] = useState('');
   const [selectedMovieId, setSelectedMovieId] = useState(null);
   
-  // !!! ЗАМЕНИТЕ 'YOUR_OMDB_API_KEY' НА ВАШ РЕАЛЬНЫЙ API КЛЮЧ !!!
   const API_KEY = '63a51ad0'; 
 
   // --- Функция для запроса фильмов (использует currentSearchTerm) ---
