@@ -1,16 +1,53 @@
-# React + Vite
+                                                          КиноКаталог (Movie Search) — приложение для поиска фильмов с использованием внешнего API.
+Работа программы:                                                          
+<img width="1280" height="584" alt="image" src="https://github.com/user-attachments/assets/8aa7c6c0-30d1-4971-9520-41637d8e5697" />
+<img width="1280" height="598" alt="image" src="https://github.com/user-attachments/assets/37bb361b-6c10-4e2d-ad5a-9398beb2a92c" />
+<img width="1280" height="595" alt="image" src="https://github.com/user-attachments/assets/1c2b9773-9ea8-4e20-ad77-c0a2a2e1fc2d" />
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Что делает `useEffect` в вашем приложении?
+В приложении `useEffect` используется для управления побочными эффектами (загрузкой данных) и синхронизации локального хранилища (`localStorage`).
+1.Запуск поиска и загрузка данных:
+-Следит за состоянием `currentSearchTerm` (фактический поисковый запрос). Как только это состояние меняется (после нажатия кнопки "Поиск"), `useEffect` вызывает асинхронную функцию `fetchMovies`, которая обращается к API и загружает список фильмов.
+2.Загрузка деталей фильма:
+- Внутри компонента `MovieModal.jsx` `useEffect` следит за состоянием `movieId`. Когда пользователь нажимает на карточку фильма, `useEffect` запускает новый запрос к API для получения полной информации о конкретном фильме.
+3.Сохранение последнего запроса:
+- `useEffect` сохраняет успешный поисковый запрос (`currentSearchTerm`) в `localStorage`, чтобы при следующем открытии приложения этот запрос был загружен автоматически.                                  
 
-Currently, two official plugins are available:
+                                                          Ответы на вопросы:
+Какие состояния вы использовали и зачем?
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- searchQuery (компонент: App.jsx)
+Назначение: Хранит текущий текст, который пользователь вводит в поле поиска. Это состояние нужно для контроля ввода данных в реальном времени.
+- currentSearchTerm (компонент: App.jsx)
+Назначение: Содержит фактический запрос, который используется для запуска поиска. Это значение обновляется после того, как пользователь нажмёт кнопку поиска.
+- movies (компонент: App.jsx)
+Назначение: Содержит массив объектов фильмов, которые отображаются в сетке. Это состояние обновляется каждый раз, когда приходят новые результаты поиска.
+- loading (компоненты: App.jsx и MovieModal.jsx)
+Назначение: Флаг, который указывает, что в данный момент происходит загрузка данных (значение true или false). Это состояние нужно для отображения индикатора "Загрузка..." на экране, пока данные не будут получены.
+- error (компоненты: App.jsx и MovieModal.jsx)
+Назначение: Хранит сообщение об ошибке, которое появляется, если API возвращает ошибку. Это может быть сообщение вроде "Фильм не найден" или "Invalid API key!" и т. п.
+- selectedMovieId (компонент: App.jsx)
+Назначение: Хранит imdbID фильма, выбранного пользователем для подробного просмотра. Это состояние управляет открытием и закрытием модального окна с деталями фильма.
+- movieDetails (компонент: MovieModal.jsx)
+Назначение: Содержит полную информацию о выбранном фильме, которая получена в результате отдельного запроса. Это состояние используется для отображения всех деталей фильма в модальном окне.
 
-## React Compiler
+Где ИИ помог, а где пришлось разбираться самому?
+Где ИИ помог:
+- Первичная структура и логика:** Создание базового шаблона React-компонентов (`App`, `SearchBar`, `MovieList`) и настройка асинхронных запросов (`fetchMovies`).
+- Переработка и адаптация:** Быстрая модификация кода под новые требования (например, удаление меню жанров, изменение логики поиска на "поиск по кнопке").
+- Стилизация (CSS):** Создание сложных стилей (например, красно-черная тема, адаптивность, модальное окно) с нуля.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Где пришлось разбираться самому:
+- API Ключ: Ввод и проверка правильности ключа OMDb (ИИ может только дать заглушку, но не предоставить рабочий ключ).
+- Согласование пропсов:** Понимание и устранение ошибок, связанных с передачей функций (`onSelect`, `onSubmit`, `onInputChange`) через иерархию компонентов.
+- Обработка критических ошибок:** Поиск и устранение ошибки "Invalid API key\!" и других ошибок консоли, связанных с импортами.
 
-## Expanding the ESLint configuration
+Что из документации API было важнее всего?
+1. Параметры запроса (`s` и `i`):
+- Параметр `s` (search) для поиска списка фильмов по ключевому слову.
+- Параметр `i` (ID) для получения полных деталей (Plot, Runtime, Director и т.д.) одного конкретного фильма для модального окна.
+2.Формат ответа (`Response: 'True'` или `Response: 'False'`):
+-Было важно знать, что API возвращает `Response: 'False'` при отсутствии результатов, а также поле `Error` с описанием проблемы, что позволило корректно обрабатывать ошибки и пустые результаты.
+3.Обработка постеров:
+- Понимание того, что не все фильмы имеют постер, и в этом случае API возвращает **`Poster: 'N/A'`**. Это требовало написания логики в `MovieCard.jsx` для отображения заглушки (`placeholder`) вместо сломанного изображения.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
